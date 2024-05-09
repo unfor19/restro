@@ -68,6 +68,19 @@ def all_history():
     return jsonify(request_history)
 
 
+@app.route('/version', methods=['GET'])
+def version():
+    return jsonify({"version": os.environ.get('PACKAGE_VERSION', 'no version available')})
+
+
+@app.route('/health', methods=['GET'])
+def healthcheck():
+    if len(restaurants) > 0:
+        return jsonify({"message": "OK"}), 200
+    else:
+        return jsonify({"error": "Internal Server Error"}), 500
+
+
 def main():
     app.run(host='0.0.0.0', port=os.environ.get('FLASK_PORT', 8000),
             debug=os.environ.get('FLASK_DEBUG', True))
