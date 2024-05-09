@@ -25,8 +25,8 @@ resource "azurerm_linux_web_app" "webapp" {
 
   site_config {
     minimum_tls_version = "1.2"
-    app_command_line    = "python3 main.py"
     health_check_path   = "/health"
+    app_command_line    = "python3 -m gunicorn -w 4 'app:app'"
 
 
     application_stack {
@@ -34,3 +34,4 @@ resource "azurerm_linux_web_app" "webapp" {
     }
   }
 }
+
