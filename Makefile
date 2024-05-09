@@ -138,7 +138,12 @@ backend-build:
 	zip -rq ${PACKAGE_FILE_PATH} .
 
 backend-run: ## Run main app script
-	@python ${BACKEND_DIR}/main.py
+	@cd ${BACKEND_DIR} && \
+	flask run
+
+backend-run-prod: ## Run main app script in production mode
+	@cd ${BACKEND_DIR} && \
+	gunicorn -w 4 'app:app'
 
 backend-deploy:
 	az webapp deploy --resource-group ${RESOURCE_GROUP_NAME} --name ${WEBAPP_NAME} --src-path ${PACKAGE_FILE_PATH} --type zip

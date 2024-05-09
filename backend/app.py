@@ -68,6 +68,10 @@ def all_history():
     return jsonify(request_history)
 
 
-if __name__ == '__main__':
+def main():
     app.run(host='0.0.0.0', port=os.environ.get('FLASK_PORT', 8000),
             debug=os.environ.get('FLASK_DEBUG', True))
+
+
+if __name__ == '__main__':
+    main()
