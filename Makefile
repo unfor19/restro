@@ -143,10 +143,12 @@ build: backend-build
 backend-run: ## Run main app script
 	@cd ${BACKEND_DIR} && \
 	flask run
+run: backend-run
 
 backend-run-prod: ## Run main app script in production mode
 	@cd ${BACKEND_DIR} && \
 	gunicorn -w 4 'app:app'
+run-prod: backend-run-prod
 
 # https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-deploy
 backend-deploy:
