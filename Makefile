@@ -135,7 +135,8 @@ backend-freeze: ## List installed packages
 
 backend-build:
 	@cd ${BACKEND_DIR} && \
-	zip -rq ${PACKAGE_FILE_PATH} .
+	rm -f ${PACKAGE_FILE_PATH} && \
+	zip -rq ${PACKAGE_FILE_PATH} app.py antenv/ requirements.txt
 
 build: backend-build
 
