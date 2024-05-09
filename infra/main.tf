@@ -22,9 +22,11 @@ resource "azurerm_linux_web_app" "webapp" {
   service_plan_id     = azurerm_service_plan.appserviceplan.id
   https_only          = true
 
+
   site_config {
     minimum_tls_version = "1.2"
     app_command_line    = "python3 main.py"
+    health_check_path   = "/health"
 
 
     application_stack {
