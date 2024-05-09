@@ -48,6 +48,10 @@
    ```bash
    make infra-apply
    ```
+1. Update `.env` with the output values
+   ```
+   make infra-update-dotenv
+   ```
 
 ### Backend
 

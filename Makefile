@@ -10,19 +10,18 @@ BASH_PATH:=$(shell which bash)
 
 
 BACKEND_DIR:=${ROOT_DIR}/backend
-VENV_DIR_PATH:=${BACKEND_DIR}/.VENV
+REQUIREMENTS_FILE_PATH:=${BACKEND_DIR}/requirements.txt
+VENV_DIR_PATH:=${BACKEND_DIR}/antenv
 INFRA_DIR:=${ROOT_DIR}/infra
-
 
 ifneq ("$(wildcard ${ROOT_DIR}/.env)","")
 include ${ROOT_DIR}/.env
 endif
 
-# Azure remote state ---------
-TFVAR_RESOURCE_GROUP_NAME:=${PROJECT_NAME}-rg
-TFVAR_STORAGE_ACCOUNT_NAME:=${PROJECT_NAME}storage
-TFVAR_STORAGE_CONTAINER_NAME:=${PROJECT_NAME}container
-# ----------------------------
+TF_VAR_project_name:=${PROJECT_NAME}
+STATE_RESOURCE_GROUP_NAME:=${TF_VAR_project_name}-rg-tfstate
+STATE_STORAGE_ACCOUNT_NAME:=${PROJECT_NAME}storagetfstate
+STATE_STORAGE_CONTAINER_NAME:=${PROJECT_NAME}containertfstate
 
 
 # --- OS Settings --- START ------------------------------------------------------------
@@ -60,6 +59,9 @@ ifndef PACKAGE_VERSION
 PACKAGE_VERSION:=99.99.99rc99e
 endif
 
+PACKAGE_FILENAME:=${PROJECT_NAME}.${PACKAGE_VERSION}.zip
+PACKAGE_FILE_PATH:=${ROOT_DIR}/${PACKAGE_FILENAME}
+
 # Removes blank rows - fgrep -v fgrep
 # Replace ":" with "" (nothing)
 # Print a beautiful table with column
@@ -88,19 +90,16 @@ print-vars: ## Print env vars
 azure-remote-state-init: ## Azure remote state init
 	# Source - https://learn.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage?tabs=azure-cli
 	# Create resource group
-	az group create --name ${TFVAR_RESOURCE_GROUP_NAME} --location eastus
+	az group create --name ${STATE_RESOURCE_GROUP_NAME} --location eastus
 
 	# Create storage account
-	az storage account create --resource-group ${TFVAR_RESOURCE_GROUP_NAME} --name ${TFVAR_STORAGE_ACCOUNT_NAME} --sku Standard_LRS --encryption-services blob
+	az storage account create --resource-group ${STATE_RESOURCE_GROUP_NAME} --name ${STATE_STORAGE_ACCOUNT_NAME} --sku Standard_LRS --encryption-services blob
 
 	# Create blob container
-	az storage container create --name ${TFVAR_STORAGE_CONTAINER_NAME} --account-name ${TFVAR_STORAGE_ACCOUNT_NAME}
+	az storage container create --name ${STATE_STORAGE_CONTAINER_NAME} --account-name ${STATE_STORAGE_ACCOUNT_NAME}
 
 azure-login: ## Azure login
 	@az login
-
-azure-deploy: ## Azure deploy
-	az webapp deploy --resource-group myResourceGroup-67302 --name webapp-67302 --src-path ${PWD}/backend/main.py.zip --type zip
 # --- Azure --- END --------------------------------------------------------------
 
 # --- Backend --- START ------------------------------------------------------------
@@ -134,8 +133,15 @@ backend-requirements-update: ## Update requirements.txt with current packages
 backend-freeze: ## List installed packages
 	pip freeze
 
+backend-build:
+	@cd ${BACKEND_DIR} && \
+	zip -rq ${PACKAGE_FILE_PATH} .
+
 backend-run: ## Run main app script
 	@python ${BACKEND_DIR}/main.py
+
+backend-deploy:
+	az webapp deploy --resource-group ${RESOURCE_GROUP_NAME} --name ${WEBAPP_NAME} --src-path ${PACKAGE_FILE_PATH} --type zip
 # --- Backend --- END --------------------------------------------------------------
 
 
@@ -155,4 +161,12 @@ infra-plan: ## Infra plan
 infra-apply: ## Infra apply
 	@cd ${INFRA_DIR} && \
 	terraform apply .infra.plan
+
+infra-update-dotenv:
+	@RESOURCE_GROUP_NAME=$(shell cd ${INFRA_DIR} && terraform output resource_group_name) && \
+		WEBAPP_NAME=$(shell cd ${INFRA_DIR} && terraform output webapp_name) && \
+		sed -i '' -e "s/RESOURCE_GROUP_NAME=.*/RESOURCE_GROUP_NAME=$${RESOURCE_GROUP_NAME}/" ${ROOT_DIR}/.env && \
+		sed -i '' -e "s/WEBAPP_NAME=.*/WEBAPP_NAME=$${WEBAPP_NAME}/" ${ROOT_DIR}/.env
+
+
 # --- Terraform --- END --------------------------------------------------------------

@@ -10,9 +10,9 @@ terraform {
 
   backend "azurerm" {
     # Must hardcode these values
-    resource_group_name  = "restro-rg"
-    storage_account_name = "restrostorage"
-    container_name       = "restrocontainer"
+    resource_group_name  = "restro-rg-tfstate"
+    storage_account_name = "restrostoragetfstate"
+    container_name       = "restrocontainertfstate"
     key                  = "terraform.tfstate"
   }
 }
