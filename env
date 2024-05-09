@@ -2,3 +2,5 @@ PROJECT_NAME=restro
 
 RESOURCE_GROUP_NAME=
 WEBAPP_NAME=
+
+TF_VAR_hostname=restro.meirg.co.il

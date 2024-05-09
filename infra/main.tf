@@ -32,6 +32,15 @@ resource "azurerm_linux_web_app" "webapp" {
     application_stack {
       python_version = 3.9
     }
+
+    dynamic "ip_restriction" {
+      for_each = local.cloudflare_ips
+
+      content {
+        ip_address = ip_restriction.value
+        action     = "Allow"
+      }
+    }
   }
 
   logs {
@@ -46,4 +55,12 @@ resource "azurerm_linux_web_app" "webapp" {
       }
     }
   }
+}
+
+
+resource "azurerm_app_service_custom_hostname_binding" "webapp" {
+  count               = local.hostname != "" ? 1 : 0
+  hostname            = local.hostname
+  resource_group_name = azurerm_resource_group.rg.name
+  app_service_name    = azurerm_linux_web_app.webapp.name
 }
