@@ -3,4 +3,7 @@
 
 *tfstate*
 *.zip
+
 antenv
+*.pyc
+__pycache__
