@@ -11,6 +11,7 @@ BASH_PATH:=$(shell which bash)
 
 BACKEND_DIR:=${ROOT_DIR}/backend
 REQUIREMENTS_FILE_PATH:=${BACKEND_DIR}/requirements.txt
+BACKEND_VERSION_PATH:=${BACKEND_DIR}/version
 VENV_DIR_PATH:=${BACKEND_DIR}/antenv
 INFRA_DIR:=${ROOT_DIR}/infra
 
@@ -136,7 +137,8 @@ backend-freeze: ## List installed packages
 backend-build:
 	@cd ${BACKEND_DIR} && \
 	rm -f ${PACKAGE_FILE_PATH} && \
-	zip -rq ${PACKAGE_FILE_PATH} app.py antenv/ requirements.txt
+	echo ${PACKAGE_VERSION} > ${BACKEND_VERSION_PATH} && \
+	zip -rq ${PACKAGE_FILE_PATH} app.py antenv/ requirements.txt version
 
 build: backend-build
 

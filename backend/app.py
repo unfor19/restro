@@ -70,7 +70,9 @@ def all_history():
 
 @app.route('/version', methods=['GET'])
 def version():
-    return jsonify({"version": os.environ.get('PACKAGE_VERSION', 'no version available')})
+    with open('version') as version_file:
+        version = version_file.read().strip()
+    return jsonify({"version": version})
 
 
 @app.route('/health', methods=['GET'])
@@ -79,6 +81,35 @@ def healthcheck():
         return jsonify({"message": "OK"}), 200
     else:
         return jsonify({"error": "Internal Server Error"}), 500
+
+
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({
+        "/restaurants": {
+            "GET": "Get all restaurants",
+            "POST": "Add a new restaurant"
+        },
+        "/restaurants/<restaurant_id>": {
+            "GET": "Get a restaurant by ID",
+            "DELETE": "Delete a restaurant by ID"
+        },
+        "/restaurants/recommendation": {
+            "GET": "Get restaurant recommendations based on query params"
+        },
+        "/restaurants/<restaurant_id>/history": {
+            "GET": "Get history of requests made to a restaurant by ID"
+        },
+        "/restaurants/history": {
+            "GET": "Get history of all requests made to all restaurants"
+        },
+        "/version": {
+            "GET": "Get the version of the application"
+        },
+        "/health": {
+            "GET": "Health check endpoint"
+        }
+    })
 
 
 def main():
