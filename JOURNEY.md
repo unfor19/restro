@@ -41,3 +41,9 @@ Super pivot - I've realized it's an overkill to deploy such a large set of infra
 This looks awesome - https://learn.microsoft.com/en-us/azure/app-service/provision-resource-terraform
 
 - Setting up Terraform to authenticate with Azure - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli
+
+## We have a Makefile
+
+I've created a Makefile to make my life easier. I can now run `make infra-init` to initialize the Terraform infra, `make infra-plan` to see the changes, and `make infra-apply` to apply the changes.
+
+Same goes for the `backend`, which is the API app that I'm going to develop.
