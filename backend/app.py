@@ -17,25 +17,25 @@ request_history = []
 
 @app.route('/restaurants', methods=['GET', 'POST'])
 def handle_restaurants():
-    if request.method == 'GET':
-        return jsonify(list(restaurants.values()))
-    elif request.method == 'POST':
-        data = request.get_json()
-        new_id = max(restaurants.keys()) + 1
-        restaurants[new_id] = data
-        return jsonify({"id": new_id, "message": "Restaurant added"}), 201
+    # if request.method == 'GET':
+    return jsonify(list(restaurants.values()))
+    # elif request.method == 'POST':
+    #     data = request.get_json()
+    #     new_id = max(restaurants.keys()) + 1
+    #     restaurants[new_id] = data
+    #     return jsonify({"id": new_id, "message": "Restaurant added"}), 201
 
 
 @app.route('/restaurants/<int:restaurant_id>', methods=['GET', 'DELETE'])
 def handle_restaurant(restaurant_id):
-    if request.method == 'GET':
-        return jsonify(restaurants.get(restaurant_id, 'Restaurant not found'))
-    elif request.method == 'DELETE':
-        if restaurant_id in restaurants:
-            del restaurants[restaurant_id]
-            return jsonify({"message": "Restaurant deleted"})
-        else:
-            return jsonify({"error": "Restaurant not found"}), 404
+    # if request.method == 'GET':
+    return jsonify(restaurants.get(restaurant_id, 'Restaurant not found'))
+    # elif request.method == 'DELETE':
+    #     if restaurant_id in restaurants:
+    #         del restaurants[restaurant_id]
+    #         return jsonify({"message": "Restaurant deleted"})
+    #     else:
+    #         return jsonify({"error": "Restaurant not found"}), 404
 
 
 @app.route('/restaurants/recommendation', methods=['GET'])
