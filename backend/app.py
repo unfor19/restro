@@ -47,8 +47,8 @@ def recommend_restaurant():
 
     recommendations = [
         r for r in restaurants.values()
-        if (style is None or r['style'] == style) and
-           (vegetarian is None or r['vegetarian'] == vegetarian) and
+        if (style is None or r['style'].lower() == style.lower()) and
+           (vegetarian is None or r['vegetarian'].lower() == vegetarian.lower()) and
            (open_now is None or (r['open_hour']
             <= current_time <= r['close_hour']))
     ]
