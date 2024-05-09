@@ -29,5 +29,18 @@ resource "azurerm_linux_web_app" "webapp" {
   https_only          = true
   site_config {
     minimum_tls_version = "1.2"
+    app_command_line    = "python3 main.py"
+
+    application_stack {
+      python_version = 3.9
+    }
   }
+}
+
+output "resource_group_name" {
+  value = azurerm_resource_group.rg.name
+}
+
+output "webapp_name" {
+  value = azurerm_linux_web_app.webapp.name
 }
