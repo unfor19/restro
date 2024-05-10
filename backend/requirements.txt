@@ -4,6 +4,7 @@ build==1.2.1
 certifi==2024.2.2
 charset-normalizer==3.3.2
 click==8.1.7
+dnspython==2.6.1
 docutils==0.21.2
 Flask==3.0.3
 gunicorn==22.0.0
@@ -23,6 +24,7 @@ nh3==0.2.17
 packaging==24.0
 pkginfo==1.10.0
 Pygments==2.18.0
+pymongo==4.7.2
 pyproject_hooks==1.1.0
 readme_renderer==43.0
 requests==2.31.0
