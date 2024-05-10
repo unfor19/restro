@@ -149,11 +149,8 @@ def index():
         "/restaurants/recommendation": {
             "GET": "Get restaurant recommendations based on query params"
         },
-        "/restaurants/<restaurant_id>/history": {
-            "GET": "Get history of requests made to a restaurant by ID"
-        },
-        "/restaurants/history": {
-            "GET": "Get history of all requests made to all restaurants"
+        "/restaurants/generate": {
+            "POST": "Generate random restaurants into the database",
         },
         "/version": {
             "GET": "Get the version of the application"

@@ -1,8 +1,13 @@
 # restro
 
+A simple restaurant recommendation system.
+
+This project helped me transition my AWS knowledge to Azure, which I've written about in the [JOURNEY.md](https://github.com/unfor19/restro/blob/main/JOURNEY.md) file.
+
 ## Requirements
 
-- Azure account with Pay-as-you-go subscription
+- [Azure account](https://azure.microsoft.com/en-us/free/) with Pay-as-you-go subscription
+- [Cloudflare Account](https://dash.cloudflare.com/sign-up)
 - Brew - [make](https://www.gnu.org/software/make/), [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
   ```bash
   brew install azure-cli
@@ -12,6 +17,8 @@
 - [Python](https://github.com/pyenv/pyenv) - **Must use version 3.9**
 
 ## Setup
+
+### Azure
 
 1. Clone the repository
 1. Copy `env` to `.env` and update the values
@@ -50,10 +57,24 @@
    ```bash
    make infra-apply
    ```
+   **NOTE:** For the first time, it will probably fail due to missing `TXT` record in Cloudflare. Add the TXT record to Cloudflare and run `make infra-plan` followed by `make infra-apply` again.
 1. Update `.env` with the output values
    ```
    make infra-update-dotenv
    ```
+
+### Cloudflare
+
+I'm using Cloudflare to protect the website with a custom password. The site is accessible only by users with the custom password in the header. If you wish to strengthen the security, you can add more rules to the WAF, like "Rate Limiting".
+
+1. Navigate to [Cloudflare dashboard](https://dash.cloudflare.com/)
+2. **Websites** > Select website > **Security** > **WAF** > **Custom rules** > **+ Create rule**
+3. Edit expression > Set to the below expression, replace `restro.meirg.co.il` with your domain, `my-custom-header-name with` your custom header name, and `my_cuStOm_passw0rd` with your custom password.
+   ```
+   (http.host eq "restro.meirg.co.il" and all(http.request.headers["my-custom-header-name"][*] ne "my_cuStOm_passw0rd"))
+   ```
+   - **Action** > **Block**
+   - **With response type** > **Default Cloudflare WAF block page**
 
 ### Backend
 
