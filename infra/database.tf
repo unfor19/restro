@@ -1,11 +1,14 @@
 resource "azurerm_cosmosdb_account" "cosmosdb" {
-  name                          = "${var.project_name}-webapp-cosmosdb"
-  location                      = azurerm_resource_group.rg.location
-  resource_group_name           = azurerm_resource_group.rg.name
-  offer_type                    = "Standard"
-  kind                          = "MongoDB"
-  enable_free_tier              = true
-  public_network_access_enabled = false
+  name                = "${var.project_name}-webapp-cosmosdb"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  offer_type          = "Standard"
+  kind                = "MongoDB"
+  enable_free_tier    = true
+
+  # Must enable this, otherwise getting:
+  # pymongo.errors.ServerSelectionTimeoutError: Request blocked by network firewall
+  public_network_access_enabled = true
 
 
   # Defines which subnets are allowed to access the DB

@@ -44,6 +44,11 @@ resource "azurerm_linux_web_app" "webapp" {
         action     = "Allow"
       }
     }
+
+    ip_restriction {
+      ip_address = var.vnet_address_space
+      action     = "Allow"
+    }
   }
 
   logs {
@@ -72,7 +77,7 @@ resource "azurerm_virtual_network" "vnet" {
   name                = "${var.project_name}-vnet"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  address_space       = ["10.0.0.0/16"]
+  address_space       = [var.vnet_address_space]
 }
 
 resource "azurerm_subnet" "private" {

@@ -138,7 +138,8 @@ backend-build:
 	@cd ${BACKEND_DIR} && \
 	rm -f ${PACKAGE_FILE_PATH} && \
 	echo ${PACKAGE_VERSION} > ${BACKEND_VERSION_PATH} && \
-	zip -rq ${PACKAGE_FILE_PATH} app.py antenv/ requirements.txt version
+	zip -rq ${PACKAGE_FILE_PATH} app.py antenv/ requirements.txt version && \
+	ls -lh ${PACKAGE_FILE_PATH}
 
 build: backend-build
 
@@ -190,9 +191,16 @@ infra-update-dotenv:
 ##
 ###Services
 ##---
+.services-up-post:
+	@echo "Services are up"
+	@echo "MongoDB: mongodb://root:example@localhost:27017/"
+	@echo "Mongo Express: http://localhost:8081"
+
 services-up: ## Run services
 	@cd ${SERVICES_DIR} && \
-	docker-compose up -d
+	docker-compose up -d && \
+	cd ${ROOT_DIR} && \
+	$(MAKE) .services-up-post
 
 services-down: ## Stop services
 	@cd ${SERVICES_DIR} && \

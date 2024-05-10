@@ -9,14 +9,14 @@
   ```
 - [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli) - 1.5.0 or higher
 - [Docker](https://docs.docker.com/get-docker/)
-- [Python](https://www.python.org/downloads/) - 3.9 or higher
+- [Python](https://github.com/pyenv/pyenv) - **Must use version 3.9**
 
 ## Setup
 
 1. Clone the repository
 1. Copy `env` to `.env` and update the values
    ```bash
-   cp env.sample .env
+   cp env .env
    ```
 1. Login to Azure
    ```bash
@@ -69,9 +69,9 @@
    ```bash
    make backend-run
    ```
-1. Package the app
+1. Build and Package the app
    ```bash
-   make backend-package
+   make backend-build
    ```
 1. Deploy the app
    ```bash

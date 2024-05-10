@@ -35,6 +35,12 @@ variable "budget_amount" {
   default     = 20
 }
 
+variable "vnet_address_space" {
+  description = "The address space for the virtual network"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
 locals {
   random_number       = var.random_integer
   resource_group_name = "${var.project_name}-rg-${local.random_number}"
