@@ -13,6 +13,16 @@ client = MongoClient(db_connection_string)
 db = client['restaurants']  # Database name
 restaurants_collection = db['restaurants']  # Collection name
 
+# If the collection is empty, add some a single restaurant
+if restaurants_collection.count_documents({}) == 0:
+    restaurants_collection.insert_one({
+        "name": "The Golden Duck",
+        "style": "chinese",
+        "vegetarian": "no",
+        "open_hour": "11:00",
+        "close_hour": "22:00"
+    })
+
 
 @app.route('/restaurants', methods=['GET', 'POST'])
 def handle_restaurants():
