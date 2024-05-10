@@ -99,7 +99,7 @@ def recommend_restaurant():
     current_time = datetime.now().strftime("%H:%M")
     query = {}
     if style:
-        query['style'] = style.lower()
+        query['style'] = style.title()
     if vegetarian:
         query['vegetarian'] = vegetarian.lower()
     if open_now:
