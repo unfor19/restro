@@ -47,3 +47,21 @@ This looks awesome - https://learn.microsoft.com/en-us/azure/app-service/provisi
 I've created a Makefile to make my life easier. I can now run `make infra-init` to initialize the Terraform infra, `make infra-plan` to see the changes, and `make infra-apply` to apply the changes.
 
 Same goes for the `backend`, which is the API app that I'm going to develop.
+
+## Custom Domain
+
+Since I own https://meirg.co.il, I've added `restro.meirg.co.il` as a custom domain to the Azure App Service. I needed to add a TXT record to my DNS provider, and then add the domain to the Azure App Service. The DNS records was added according to the error that was raised during `make infra-apply`.
+
+## But the Database
+
+So far I've used a dummy variable to store the restaurants. I need to replace it with a real database. I've decided to use [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) since I'm familiar with it. I've created a new cluster manually via the GUI. The next step is to create a new database and a new user. I'll use the `pymongo` library to connect to the database.
+
+As mentioned in the README.md, I intend to do a [peering connection](https://www.mongodb.com/docs/atlas/security-vpc-peering/) between the Azure App Service and the MongoDB Atlas cluster. I've created a new VNet in Azure, and a new peering connection in MongoDB Atlas.
+
+## Pivot the DB
+
+Apparently, MongoDB Atlas supports Peering Connection for non-shared clusters, so I'm dropping this idea, even though it was fun configuring the VNet and the peering connection.
+
+I've decided to use the [Azure Cosmos DB](https://azure.microsoft.com/en-us/services/cosmos-db) since it's a managed service and I don't need to worry about the infrastructure.
+
+Yalla adding it to Terraform, use the CosmoDB MongoDB flavor.

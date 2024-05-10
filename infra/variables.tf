@@ -29,6 +29,12 @@ variable "hostname" {
   default     = ""
 }
 
+variable "budget_amount" {
+  description = "The budget amount for the Azure subscription - USD $"
+  type        = number
+  default     = 20
+}
+
 locals {
   random_number       = var.random_integer
   resource_group_name = "${var.project_name}-rg-${local.random_number}"
