@@ -1,41 +1,44 @@
 import os
-
 from flask import Flask, request, jsonify
 from datetime import datetime
+from pymongo import MongoClient
+from bson.json_util import dumps
 
 app = Flask(__name__)
 
-# Dummy database simulation
-restaurants = {
-    1: {'name': 'Pasta Paradise', 'address': '123 Spaghetti Lane', 'style': 'Italian', 'vegetarian': 'no', 'open_hour': '10:00', 'close_hour': '22:00', 'deliveries': 'yes'},
-    2: {'name': 'Seoul Food', 'address': '789 Kimchi Blvd', 'style': 'Korean', 'vegetarian': 'yes', 'open_hour': '11:00', 'close_hour': '23:00', 'deliveries': 'no'},
-    3: {'name': 'French Fries', 'address': '456 Baguette St', 'style': 'French', 'vegetarian': 'no', 'open_hour': '12:00', 'close_hour': '21:00', 'deliveries': 'yes'}
-}
-# History storage
-request_history = []
+# Setup MongoDB connection
+db_connection_string = os.environ.get(
+    'DB_CONNECTION_STRING', 'mongodb://root:example@localhost:27017/')
+client = MongoClient(db_connection_string)
+db = client['restaurants']  # Database name
+restaurants_collection = db['restaurants']  # Collection name
 
 
 @app.route('/restaurants', methods=['GET', 'POST'])
 def handle_restaurants():
-    # if request.method == 'GET':
-    return jsonify(list(restaurants.values()))
-    # elif request.method == 'POST':
-    #     data = request.get_json()
-    #     new_id = max(restaurants.keys()) + 1
-    #     restaurants[new_id] = data
-    #     return jsonify({"id": new_id, "message": "Restaurant added"}), 201
+    if request.method == 'GET':
+        restaurants = list(restaurants_collection.find({}))
+        return dumps(restaurants)  # Use dumps to convert MongoDB BSON to JSON
+    elif request.method == 'POST':
+        data = request.get_json()
+        result = restaurants_collection.insert_one(data)
+        return jsonify({"id": str(result.inserted_id), "message": "Restaurant added"}), 201
 
 
 @app.route('/restaurants/<int:restaurant_id>', methods=['GET', 'DELETE'])
 def handle_restaurant(restaurant_id):
-    # if request.method == 'GET':
-    return jsonify(restaurants.get(restaurant_id, 'Restaurant not found'))
-    # elif request.method == 'DELETE':
-    #     if restaurant_id in restaurants:
-    #         del restaurants[restaurant_id]
-    #         return jsonify({"message": "Restaurant deleted"})
-    #     else:
-    #         return jsonify({"error": "Restaurant not found"}), 404
+    if request.method == 'GET':
+        restaurant = restaurants_collection.find_one({"_id": restaurant_id})
+        if restaurant:
+            return dumps(restaurant)
+        else:
+            return jsonify({"error": "Restaurant not found"}), 404
+    elif request.method == 'DELETE':
+        result = restaurants_collection.delete_one({"_id": restaurant_id})
+        if result.deleted_count > 0:
+            return jsonify({"message": "Restaurant deleted"})
+        else:
+            return jsonify({"error": "Restaurant not found"}), 404
 
 
 @app.route('/restaurants/recommendation', methods=['GET'])
@@ -44,28 +47,17 @@ def recommend_restaurant():
     vegetarian = request.args.get('vegetarian', None)
     open_now = request.args.get('open_now', None)
     current_time = datetime.now().strftime("%H:%M")
+    query = {}
+    if style:
+        query['style'] = style.lower()
+    if vegetarian:
+        query['vegetarian'] = vegetarian.lower()
+    if open_now:
+        query['open_hour'] = {"$lte": current_time}
+        query['close_hour'] = {"$gte": current_time}
 
-    recommendations = [
-        r for r in restaurants.values()
-        if (style is None or r['style'].lower() == style.lower()) and
-           (vegetarian is None or r['vegetarian'].lower() == vegetarian.lower()) and
-           (open_now is None or (r['open_hour']
-            <= current_time <= r['close_hour']))
-    ]
-
-    return jsonify({"recommendations": recommendations})
-
-
-@app.route('/restaurants/<int:restaurant_id>/history', methods=['GET'])
-def restaurant_history(restaurant_id):
-    filtered_history = [
-        h for h in request_history if h['restaurant_id'] == restaurant_id]
-    return jsonify(filtered_history)
-
-
-@app.route('/restaurants/history', methods=['GET'])
-def all_history():
-    return jsonify(request_history)
+    recommendations = list(restaurants_collection.find(query))
+    return dumps(recommendations)
 
 
 @app.route('/version', methods=['GET'])
@@ -77,10 +69,20 @@ def version():
 
 @app.route('/health', methods=['GET'])
 def healthcheck():
-    if len(restaurants) > 0:
-        return jsonify({"message": "OK"}), 200
-    else:
-        return jsonify({"error": "Internal Server Error"}), 500
+    # A basic check to ensure that the application is running
+    # able to connect to the database and return data
+    try:
+        restaurants = list(restaurants_collection.find({}))
+        print("Connected to DB ")
+        if len(restaurants) > 0:
+            return jsonify({"message": "OK"}), 200
+        else:
+            print(restaurants)
+            return jsonify({"error": "No data in database"}), 500
+    except Exception as e:
+        error_msg = f"Error: {str(e)}"
+        print(error_msg)
+        return jsonify({"error": f"Internal Server Error"}), 500
 
 
 @app.route('/', methods=['GET'])

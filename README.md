@@ -3,11 +3,13 @@
 ## Requirements
 
 - Azure account with Pay-as-you-go subscription
-- Brew - [make](https://www.gnu.org/software/make/) and [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+- Brew - [make](https://www.gnu.org/software/make/), [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
   ```bash
-  brew install azure-cli make
+  brew install azure-cli
   ```
 - [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli) - 1.5.0 or higher
+- [Docker](https://docs.docker.com/get-docker/)
+- [Python](https://www.python.org/downloads/) - 3.9 or higher
 
 ## Setup
 
@@ -74,4 +76,19 @@
 1. Deploy the app
    ```bash
    make backend-deploy
+   ```
+
+### Services
+
+For local development, you can run the services using Docker.
+
+Currently supported services: `mongo` and `mongo-express`
+
+1. Run the services
+   ```bash
+   make services-up
+   ```
+1. Remove the services
+   ```bash
+   make services-down
    ```

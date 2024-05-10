@@ -8,7 +8,7 @@ ROOT_DIR:=${CURDIR}
 BASH_PATH:=$(shell which bash)
 
 
-
+SERVICES_DIR:=${ROOT_DIR}/services
 BACKEND_DIR:=${ROOT_DIR}/backend
 REQUIREMENTS_FILE_PATH:=${BACKEND_DIR}/requirements.txt
 BACKEND_VERSION_PATH:=${BACKEND_DIR}/version
@@ -183,5 +183,19 @@ infra-update-dotenv:
 		sed -i '' -e "s/RESOURCE_GROUP_NAME=.*/RESOURCE_GROUP_NAME=$${RESOURCE_GROUP_NAME}/" ${ROOT_DIR}/.env && \
 		sed -i '' -e "s/WEBAPP_NAME=.*/WEBAPP_NAME=$${WEBAPP_NAME}/" ${ROOT_DIR}/.env
 
-
 # --- Terraform --- END --------------------------------------------------------------
+
+
+# --- Services --- START ------------------------------------------------------------
+##
+###Services
+##---
+services-up: ## Run services
+	@cd ${SERVICES_DIR} && \
+	docker-compose up -d
+
+services-down: ## Stop services
+	@cd ${SERVICES_DIR} && \
+	docker-compose down --remove-orphans --volumes
+
+# --- Services --- END --------------------------------------------------------------
