@@ -145,7 +145,7 @@ build: backend-build
 
 backend-run: ## Run main app script
 	@cd ${BACKEND_DIR} && \
-	flask run
+	FLASK_PORT=5000 FLASK_DEBUG=true flask run
 run: backend-run
 
 backend-run-prod: ## Run main app script in production mode
