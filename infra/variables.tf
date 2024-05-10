@@ -5,10 +5,22 @@ variable "project_name" {
   type        = string
 }
 
-# Generate a random integer to create a globally unique name
-resource "random_integer" "ri" {
-  min = 10000
-  max = 99999
+variable "location" {
+  description = "The Azure region to deploy the resources"
+  type        = string
+  default     = "northeurope"
+}
+
+variable "service_plan_sku_name" {
+  description = "The SKU name for the App Service Plan - F1 and Y1 are NOT supported"
+  type        = string
+  default     = "B1"
+}
+
+variable "random_integer" {
+  description = "A random integer to append to resource names"
+  type        = number
+  default     = 23
 }
 
 variable "hostname" {
@@ -18,7 +30,7 @@ variable "hostname" {
 }
 
 locals {
-  random_number       = random_integer.ri.result
+  random_number       = var.random_integer
   resource_group_name = "${var.project_name}-rg-${local.random_number}"
 
   cloudflare_ips = [
