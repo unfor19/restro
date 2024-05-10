@@ -1,4 +1,7 @@
+
 import os
+import random
+
 from flask import Flask, request, jsonify
 from datetime import datetime
 from pymongo import MongoClient
@@ -12,6 +15,43 @@ db_connection_string = os.environ.get(
 client = MongoClient(db_connection_string)
 db = client['restaurants']  # Database name
 restaurants_collection = db['restaurants']  # Collection name
+
+
+# Possible attributes for random generation
+styles = ["Italian", "Argentinian", "Moroccan",
+          "Tunisian", "Polish", "American", "Chinese"]
+names_prefix = ["The Golden", "The Rusty", "The Cozy",
+                "The Spicy", "The Sweet", "The Savory"]
+names_suffix = ["Duck", "Spoon", "House", "Place", "Corner", "Table"]
+vegetarian = ["yes", "no"]
+
+
+def generate_random_restaurant():
+    name = f"{random.choice(names_prefix)} {random.choice(names_suffix)}"
+    style = random.choice(styles)
+    vegetarian = random.choice(["yes", "no"])
+    # Opening hours between 9 AM and 11 AM
+    open_hour = f"{random.randint(9, 11)}:00"
+    # Closing hours between 8 PM and 11 PM
+    close_hour = f"{random.randint(20, 23)}:00"
+
+    return {
+        "name": name,
+        "style": style,
+        "vegetarian": vegetarian,
+        "open_hour": open_hour,
+        "close_hour": close_hour
+    }
+
+
+@app.route('/restaurants/generate', methods=['POST'])
+def generate_restaurants():
+    num_restaurants = request.args.get('count', default=5, type=int)
+    new_restaurants = [generate_random_restaurant()
+                       for _ in range(num_restaurants)]
+    result = restaurants_collection.insert_many(new_restaurants)
+    return jsonify({"message": f"Successfully added {num_restaurants} restaurants.", "ids": [str(id) for id in result.inserted_ids]}), 201
+
 
 # If the collection is empty, add some a single restaurant
 if restaurants_collection.count_documents({}) == 0:
