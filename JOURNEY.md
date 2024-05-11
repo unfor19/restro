@@ -212,7 +212,7 @@ I'm checking the logs of the app with Azure by navigating to:
 
 Next steps:
 
-1. App
+1. Monitoring - History of requests should be logged and queried easily - I intend to print successful requests+responses to the Azure Monitor.
 2. Azure Budget - I've added a budget alert to the Resource Group, the default is **20$ per month**, but I haven't tested the way it alerts and stops the services, so I should test it.
 3. Add a CI/CD pipeline to the project.
    1. Azure
