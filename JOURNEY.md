@@ -234,3 +234,7 @@ Future improvements:
 6.  Support multiple environment - I've used a single environment, but I should support multiple environments like `dev`, `staging`, and `prod`. Should be easy enough since I'm using Terraform 🙃
 7.  Unittests - I haven't written any tests, so I should write some tests for the app; That is very unprofessional of me 😅. Usually I do it during the development process, but then again, this project was a mystery all the way. I preferred having an app that is up and running, and now I can go crazy and test it. I feel comfortable enough to keep it public, even though it's wasn't battle-tested, since it's protected behind Cloudflare 💪🏻.
 8.  Add `CONTRIBUTING.md` - I've added a few notes about how to go through the local development process of this project, but I think it's a good idea to add a `CONTRIBUTING.md` file.
+
+## Life is hell without Docker
+
+I've decided to add Docker to the project. I've created a `Dockerfile` for the backend; Seems like using a `zip` package was too tough, I wasn't able to use Open Telemetry with it, so I've decided to use Docker. Either way, using Docker is probably better than my hacky way of building and pushing the app, it is also a lot quicker to deploy.

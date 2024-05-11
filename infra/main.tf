@@ -23,17 +23,20 @@ resource "azurerm_linux_web_app" "webapp" {
   https_only          = true
 
   app_settings = {
-    "DB_CONNECTION_STRING" = azurerm_cosmosdb_account.cosmosdb.connection_strings[0]
+    "DB_CONNECTION_STRING"                  = azurerm_cosmosdb_account.cosmosdb.connection_strings[0],
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.webapp.connection_string,
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE     = "false"
+    DOCKER_REGISTRY_SERVER_URL              = "https://index.docker.io/v1"
+    WEBSITES_PORT                           = "8000"
+    DOCKER_ENABLE_CI                        = var.docker_enable_ci
   }
 
   site_config {
     minimum_tls_version = "1.2"
     health_check_path   = "/health"
-    app_command_line    = "python3 -m gunicorn -w 4 'app:app'"
-
-
     application_stack {
-      python_version = 3.9
+      docker_image     = var.docker_image
+      docker_image_tag = var.docker_tag
     }
 
     dynamic "ip_restriction" {
@@ -58,7 +61,7 @@ resource "azurerm_linux_web_app" "webapp" {
 
     http_logs {
       file_system {
-        retention_in_days = 7
+        retention_in_days = 0
         retention_in_mb   = 35
       }
     }
@@ -125,4 +128,23 @@ resource "azurerm_consumption_budget_resource_group" "webapp" {
     threshold      = var.budget_threshold
     operator       = "GreaterThan"
   }
+}
+
+
+resource "azurerm_log_analytics_workspace" "webapp" {
+  name                = "${var.project_name}-${local.random_number}-loganalytics"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  retention_in_days   = 30
+  sku                 = "PerGB2018"
+}
+
+
+resource "azurerm_application_insights" "webapp" {
+  name                = "${var.project_name}-${local.random_number}-appinsights"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  application_type    = "web"
+  workspace_id        = azurerm_log_analytics_workspace.webapp.id
+  retention_in_days   = 30
 }

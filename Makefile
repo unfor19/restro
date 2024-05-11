@@ -29,6 +29,7 @@ RESOURCE_GROUP_NAME=${PROJECT_NAME}-rg-${TF_VAR_random_integer}
 WEBAPP_NAME=${PROJECT_NAME}-${TF_VAR_random_integer}
 
 
+
 # --- OS Settings --- START ------------------------------------------------------------
 # Windows
 ifneq (,$(findstring NT, $(UNAME)))
@@ -64,8 +65,28 @@ ifndef PACKAGE_VERSION
 PACKAGE_VERSION:=99.99.99rc99e
 endif
 
-PACKAGE_FILENAME:=${PROJECT_NAME}.${PACKAGE_VERSION}.zip
-PACKAGE_FILE_PATH:=${ROOT_DIR}/${PACKAGE_FILENAME}
+
+ifndef DOCKER_REGISTRY
+DOCKER_REGISTRY:=docker.io
+endif
+
+ifndef DOCKER_OWNER
+DOCKER_OWNER:=unfor19
+endif
+
+
+ifndef DOCKER_IMAGE
+DOCKER_IMAGE:=${DOCKER_REGISTRY}/${DOCKER_OWNER}/${PROJECT_NAME}
+endif
+
+ifndef DOCKER_TAG
+DOCKER_TAG:=${PACKAGE_VERSION}
+endif
+TF_VAR_docker_tag:= ${DOCKER_TAG}
+
+ifndef DOCKER_IMAGE_TAG
+DOCKER_IMAGE_TAG:=${DOCKER_IMAGE}:${DOCKER_TAG}
+endif
 
 # Removes blank rows - fgrep -v fgrep
 # Replace ":" with "" (nothing)
@@ -138,14 +159,19 @@ backend-requirements-update: ## Update requirements.txt with current packages
 backend-freeze: ## List installed packages
 	pip freeze
 
-backend-build:
+backend-build: validate-PACKAGE_VERSION validate-DOCKER_IMAGE_TAG validate-BACKEND_DIR
 	@cd ${BACKEND_DIR} && \
-	rm -f ${PACKAGE_FILE_PATH} && \
-	echo ${PACKAGE_VERSION} > ${BACKEND_VERSION_PATH} && \
-	zip -rq ${PACKAGE_FILE_PATH} app.py antenv/ requirements.txt version && \
-	ls -lh ${PACKAGE_FILE_PATH}
+	docker build --build-arg PACKAGE_VERSION=${PACKAGE_VERSION} --platform linux/amd64 -t ${DOCKER_IMAGE_TAG} .
+
+backend-push:
+	@docker push ${DOCKER_IMAGE_TAG}
 
 build: backend-build
+push: backend-push
+
+backend-docker: ## Run
+	docker run -it -e DB_CONNECTION_STRING=mongodb://root:example@mongo:27017 \
+		--network services_restro -p 8000:8000 --rm ${DOCKER_IMAGE_TAG}
 
 backend-run: ## Run main app script
 	@cd ${BACKEND_DIR} && \
@@ -159,7 +185,8 @@ run-prod: backend-run-prod
 
 # https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-deploy
 backend-deploy:
-	az webapp deploy --resource-group ${RESOURCE_GROUP_NAME} --name ${WEBAPP_NAME} --src-path ${PACKAGE_FILE_PATH} --type zip
+	az webapp config container set --name ${WEBAPP_NAME} --resource-group ${RESOURCE_GROUP_NAME} --container-image-name ${DOCKER_OWNER}/${PROJECT_NAME}:${PACKAGE_VERSION}
+
 
 deploy: backend-deploy
 # --- Backend --- END --------------------------------------------------------------

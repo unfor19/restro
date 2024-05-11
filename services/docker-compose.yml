@@ -1,6 +1,6 @@
 # Use root/example as user/password credentials
 networks:
-  myNetwork:
+  restro:
     driver: bridge
 
 services:
@@ -16,7 +16,7 @@ services:
     ports:
       - 27017:27017
     networks:
-      - myNetwork
+      - restro
 
   mongo-express:
     image: mongo-express
@@ -29,7 +29,7 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
       ME_CONFIG_BASICAUTH: false
     networks:
-      - myNetwork
+      - restro
 
 volumes:
   mongo-data:

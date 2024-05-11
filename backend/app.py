@@ -1,13 +1,55 @@
-
 import os
 import random
 
-from flask import Flask, request, jsonify
 from datetime import datetime
 from pymongo import MongoClient
 from bson.json_util import dumps
 
+from flask.logging import default_handler
+from logging import INFO, getLogger
+
+
+def get_is_cloud():
+    return 'WEBSITE_INSTANCE_ID' in os.environ
+
+
+# autopep8: off
+### --- Initialize Application --- ###
+is_cloud = get_is_cloud()
+if is_cloud:
+    from azure.monitor.opentelemetry import configure_azure_monitor
+    configure_azure_monitor(
+        connection_string=os.environ.get(
+            'APPLICATIONINSIGHTS_CONNECTION_STRING', None),
+        instrumentation_options={
+            "flask": {"enabled": True},
+            "azure_sdk": {"enabled": True},
+            "django": {"enabled": False},
+            "fastapi": {"enabled": False},
+            "psycopg2": {"enabled": False},
+            "requests": {"enabled": True},
+            "urllib": {"enabled": True},
+            "urllib3": {"enabled": True},   
+        },
+        logger_name=__name__,
+    )
+else:
+    print("Running locally")
+
+# Import Flask after running configure_azure_monitor()
+from flask import Flask, json, request, jsonify
+# autopep8: on
 app = Flask(__name__)
+
+
+if is_cloud:
+    app.logger.removeHandler(default_handler)
+    app.logger = getLogger(__name__)
+else:
+    app.logger.addHandler(default_handler)
+
+app.logger.setLevel(INFO)
+
 
 # Setup MongoDB connection
 db_connection_string = os.environ.get(
@@ -16,7 +58,6 @@ client = MongoClient(db_connection_string)
 db = client['restaurants']  # Database name
 restaurants_collection = db['restaurants']  # Collection name
 
-
 # Possible attributes for random generation
 styles = ["Italian", "Argentinian", "Moroccan",
           "Tunisian", "Polish", "American", "Chinese"]
@@ -24,6 +65,7 @@ names_prefix = ["The Golden", "The Rusty", "The Cozy",
                 "The Spicy", "The Sweet", "The Savory"]
 names_suffix = ["Duck", "Spoon", "House", "Place", "Corner", "Table"]
 vegetarian = ["yes", "no"]
+# ----------------------------------------------------------------------------
 
 
 def generate_random_restaurant():
@@ -112,8 +154,7 @@ def recommend_restaurant():
 
 @app.route('/version', methods=['GET'])
 def version():
-    with open('version') as version_file:
-        version = version_file.read().strip()
+    version = os.environ.get('PACKAGE_VERSION', '1.0')
     return jsonify({"version": version})
 
 
@@ -123,7 +164,7 @@ def healthcheck():
     # able to connect to the database and return data
     try:
         restaurants = list(restaurants_collection.find({}))
-        print("Connected to DB ")
+        # print("Connected to DB ")
         if len(restaurants) > 0:
             return jsonify({"message": "OK"}), 200
         else:
@@ -159,6 +200,26 @@ def index():
             "GET": "Health check endpoint"
         }
     })
+
+
+@app.after_request
+def log_request(response):
+    if request.path.find('/health'):
+        return response
+
+    if response.status_code >= 200 and response.status_code < 300:
+        log_params = {
+            "method": request.method,
+            "path": request.path,
+            "ip": request.remote_addr,
+            "host": request.host,
+            "params": json.dumps(request.args, default=str),
+            "data": json.dumps(request.get_json(silent=True), default=str),
+            "headers": json.dumps(request.headers, default=str),
+        }
+        app.logger.info(log_params)
+
+    return response
 
 
 def main():
