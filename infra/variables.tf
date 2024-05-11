@@ -41,6 +41,19 @@ variable "vnet_address_space" {
   default     = "10.0.0.0/16"
 }
 
+variable "budget_threshold" {
+  description = "The threshold for the budget - Percentage of the budget amount"
+  type        = number
+  default     = 80
+}
+
+variable "budget_notification_emails" {
+  description = "The email addresses to notify when the budget is exceeded - Commas separate multiple emails"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
 locals {
   random_number       = var.random_integer
   resource_group_name = "${var.project_name}-rg-${local.random_number}"
@@ -63,6 +76,8 @@ locals {
     "172.64.0.0/13",
     "131.0.72.0/22"
   ]
+
+  budget_notification_emails = try(split(",", var.budget_notification_emails), [])
 
   hostname = var.hostname
 }

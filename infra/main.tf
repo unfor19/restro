@@ -104,9 +104,10 @@ resource "azurerm_app_service_virtual_network_swift_connection" "webapp" {
 
 
 resource "azurerm_consumption_budget_resource_group" "webapp" {
+  count             = length(local.budget_notification_emails) > 0 ? 1 : 0
   name              = var.project_name
   resource_group_id = azurerm_resource_group.rg.id
-  amount            = 20.0
+  amount            = var.budget_amount
 
   time_grain = "Monthly"
 
@@ -120,8 +121,8 @@ resource "azurerm_consumption_budget_resource_group" "webapp" {
   }
 
   notification {
-    contact_roles = ["Owner", "Contributor"]
-    threshold     = 80
-    operator      = "GreaterThan"
+    contact_emails = local.budget_notification_emails
+    threshold      = var.budget_threshold
+    operator       = "GreaterThan"
   }
 }
