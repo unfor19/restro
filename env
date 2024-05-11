@@ -1,5 +1,9 @@
 PROJECT_NAME=restro
 
+# Comma-separated
+TF_VAR_budget_notification_emails=willy.wonka@chocolates.com,oompa.loompa@chocolates.com
+
+
 TF_VAR_hostname=restro.meirg.co.il
 
 # Used in resource names for uniqueness
