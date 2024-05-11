@@ -1,8 +1,6 @@
 PROJECT_NAME=restro
 
-
 TF_VAR_hostname=restro.meirg.co.il
 
-# DO NOT SET - Auto generated
-RESOURCE_GROUP_NAME=
-WEBAPP_NAME=
+# Used in resource names for uniqueness
+TF_VAR_random_integer=23

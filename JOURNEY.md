@@ -72,7 +72,7 @@ I've deployed the app to Azure App Service, and it's working! I've added a few r
 
 I can develop the app locally easily by using the commands `make services-up` and `make run` - It runs mongodb and the app locally in development, so the development cycle is quite fast.
 
-To test my app manually (at least for now) I've added created a Postman collections for both `https://127.0.0.0:5000` and `https://restro.meirg.co.il`. Here's my exported collection -
+To test my app manually (at least for now) I've created a Postman collections for both `https://127.0.0.0:5000` and `https://restro.meirg.co.il`. Here's my exported collection for localhost -
 
 <details>
 

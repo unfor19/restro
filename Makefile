@@ -25,6 +25,10 @@ STATE_STORAGE_ACCOUNT_NAME:=${PROJECT_NAME}storagetfstate
 STATE_STORAGE_CONTAINER_NAME:=${PROJECT_NAME}containertfstate
 
 
+RESOURCE_GROUP_NAME=${PROJECT_NAME}-rg-${TF_VAR_random_integer}
+WEBAPP_NAME=${PROJECT_NAME}-${TF_VAR_random_integer}
+
+
 # --- OS Settings --- START ------------------------------------------------------------
 # Windows
 ifneq (,$(findstring NT, $(UNAME)))
@@ -177,13 +181,10 @@ infra-plan: ## Infra plan
 infra-apply: ## Infra apply
 	@cd ${INFRA_DIR} && \
 	terraform apply .infra.plan
-
-infra-update-dotenv:
-	@RESOURCE_GROUP_NAME=$(shell cd ${INFRA_DIR} && terraform output resource_group_name) && \
-		WEBAPP_NAME=$(shell cd ${INFRA_DIR} && terraform output webapp_name) && \
-		sed -i '' -e "s/RESOURCE_GROUP_NAME=.*/RESOURCE_GROUP_NAME=$${RESOURCE_GROUP_NAME}/" ${ROOT_DIR}/.env && \
-		sed -i '' -e "s/WEBAPP_NAME=.*/WEBAPP_NAME=$${WEBAPP_NAME}/" ${ROOT_DIR}/.env
-
+	
+infra-outputs: ## Infra outputs
+	@cd ${INFRA_DIR} && \
+	terraform output
 # --- Terraform --- END --------------------------------------------------------------
 
 
