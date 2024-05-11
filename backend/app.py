@@ -1,13 +1,33 @@
 
+import json
+import time
 import os
 import random
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, g
 from datetime import datetime
 from pymongo import MongoClient
 from bson.json_util import dumps
 
+from azure.monitor.opentelemetry import configure_azure_monitor
+from logging import INFO
+
 app = Flask(__name__)
+
+
+is_cloud = False
+
+if os.environ.get('WEBSITE_INSTANCE_ID', None):
+    is_cloud = True
+
+logger = app.logger
+
+if is_cloud:
+    configure_azure_monitor(connection_string=os.environ.get(
+        'APPLICATIONINSIGHTS_CONNECTION_STRING', None))
+
+
+logger.setLevel(INFO)
 
 # Setup MongoDB connection
 db_connection_string = os.environ.get(
@@ -159,6 +179,36 @@ def index():
             "GET": "Health check endpoint"
         }
     })
+
+
+@app.before_request
+def start_timer():
+    g.start = time.time()
+
+
+@app.after_request
+def log_request(response):
+    if response.status_code >= 200 and response.status_code < 300:
+        now = time.time()
+        duration = round(now - g.start, 5) * 1000
+        log_params = {
+            "method": request.method,
+            "path": request.path,
+            "status": response.status_code,
+            "duration_ms": duration,
+            "ip": request.remote_addr,
+            "host": request.host,
+            "params": dict(request.args),
+            "data": request.get_json(silent=True),
+            "headers": dict(request.headers),
+            "response": json.loads(response.data.decode('utf-8'))
+        }
+        if is_cloud:
+            logger.info("Request logged", extra=log_params)
+        else:
+            logger.info(log_params)
+
+    return response
 
 
 def main():

@@ -23,7 +23,8 @@ resource "azurerm_linux_web_app" "webapp" {
   https_only          = true
 
   app_settings = {
-    "DB_CONNECTION_STRING" = azurerm_cosmosdb_account.cosmosdb.connection_strings[0]
+    "DB_CONNECTION_STRING"                  = azurerm_cosmosdb_account.cosmosdb.connection_strings[0],
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.webapp.connection_string,
   }
 
   site_config {
@@ -125,4 +126,11 @@ resource "azurerm_consumption_budget_resource_group" "webapp" {
     threshold      = var.budget_threshold
     operator       = "GreaterThan"
   }
+}
+
+resource "azurerm_application_insights" "webapp" {
+  name                = "${var.project_name}-${local.random_number}"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  application_type    = "web"
 }
