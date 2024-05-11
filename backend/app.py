@@ -86,7 +86,7 @@ def generate_random_restaurant():
     }
 
 
-@app.route('/restaurants/generate', methods=['POST'])
+@app.route('/restaurants/generate', methods=['GET'])
 def generate_restaurants():
     num_restaurants = request.args.get('count', default=5, type=int)
     new_restaurants = [generate_random_restaurant()
@@ -204,20 +204,19 @@ def index():
 
 @app.after_request
 def log_request(response):
-    if request.path.find('/health'):
+    if '/health' in request.path:
         return response
 
-    if response.status_code >= 200 and response.status_code < 300:
-        log_params = {
-            "method": request.method,
-            "path": request.path,
-            "ip": request.remote_addr,
-            "host": request.host,
-            "params": json.dumps(request.args, default=str),
-            "data": json.dumps(request.get_json(silent=True), default=str),
-            "headers": json.dumps(request.headers, default=str),
-        }
-        app.logger.info(log_params)
+    log_params = {
+        "method": request.method,
+        "path": request.path,
+        "ip": request.remote_addr,
+        "host": request.host,
+        "params": json.dumps(request.args, default=str),
+        "data": json.dumps(request.get_json(silent=True), default=str),
+        "headers": json.dumps(request.headers, default=str),
+    }
+    app.logger.info(log_params)
 
     return response
 
