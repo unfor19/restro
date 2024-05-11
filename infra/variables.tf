@@ -54,6 +54,25 @@ variable "budget_notification_emails" {
   sensitive   = true
 }
 
+variable "docker_image" {
+  description = "The Docker image to deploy to the web app"
+  type        = string
+  default     = "unfor19/restro"
+}
+
+variable "docker_tag" {
+  description = "The Docker image tag to deploy to the web app"
+  type        = string
+  default     = "latest"
+}
+
+variable "docker_enable_ci" {
+  description = "Enable CI/CD for the Docker image"
+  type        = bool
+  default     = false
+}
+
+
 locals {
   random_number       = var.random_integer
   resource_group_name = "${var.project_name}-rg-${local.random_number}"
