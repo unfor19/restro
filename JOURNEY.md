@@ -223,7 +223,6 @@ Next steps:
          1. For infra
          2. For backend (app)
 4. Draw the infra with [app.diagrams.net](https://app.diagrams.net/) - Sounds funny that I don't it in the end, but on the other hand, I had no idea what I'm about to do in the beginning, since I wasn't familiar with Azure at all. I think it's a good idea to draw the infra now, after I've done everything, to see if I've missed something.
-5. Add `CONTRIBUTING.md` - I've added a few notes about how to go through the local development process of this project, but I think it's a good idea to add a `CONTRIBUTING.md` file.
 
 Future improvements:
 
@@ -234,3 +233,4 @@ Future improvements:
 5.  Monitoring - I've added a few logs to the Azure Monitor, but I should add more logs and alerts.
 6.  Support multiple environment - I've used a single environment, but I should support multiple environments like `dev`, `staging`, and `prod`. Should be easy enough since I'm using Terraform 🙃
 7.  Unittests - I haven't written any tests, so I should write some tests for the app; That is very unprofessional of me 😅. Usually I do it during the development process, but then again, this project was a mystery all the way. I preferred having an app that is up and running, and now I can go crazy and test it. I feel comfortable enough to keep it public, even though it's wasn't battle-tested, since it's protected behind Cloudflare 💪🏻.
+8.  Add `CONTRIBUTING.md` - I've added a few notes about how to go through the local development process of this project, but I think it's a good idea to add a `CONTRIBUTING.md` file.
