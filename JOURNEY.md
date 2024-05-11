@@ -238,3 +238,9 @@ Future improvements:
 ## Life is hell without Docker
 
 I've decided to add Docker to the project. I've created a `Dockerfile` for the backend; Seems like using a `zip` package was too tough, I wasn't able to use Open Telemetry with it, so I've decided to use Docker. Either way, using Docker is probably better than my hacky way of building and pushing the app, it is also a lot quicker to deploy.
+
+## Cloudflare POST to GET issues
+
+I'm not sure why, but when sending a `POST` request to the API, Cloudflare is returning a 405 error. Looking in the logs, it's as if Cloudflare proxies the request as `GET` instead of `POST`, hence the 405 error. I've tried to disable the WAF, but it didn't help. I've decided to use a `GET` request instead of a `POST` request for the `/restaurants/generate` endpoint.
+
+I need to further investigate this issue, I'm intrigued.
