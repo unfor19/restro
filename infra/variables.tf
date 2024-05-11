@@ -73,6 +73,7 @@ variable "docker_enable_ci" {
 }
 
 
+
 locals {
   random_number       = var.random_integer
   resource_group_name = "${var.project_name}-rg-${local.random_number}"
