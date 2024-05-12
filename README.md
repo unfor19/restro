@@ -14,7 +14,7 @@ This project helped me transition my AWS knowledge to Azure, which I've written 
   ```
 - [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli) - 1.5.0 or higher
 - [Docker](https://docs.docker.com/get-docker/)
-- [Python](https://github.com/pyenv/pyenv) - **Must use version 3.9**
+- [Python](https://github.com/pyenv/pyenv) - 3.9 or higher
 
 ## Setup
 
