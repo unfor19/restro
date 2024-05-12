@@ -73,7 +73,7 @@ I'm using Cloudflare to protect the website with a custom password. The site is 
    make infra-apply
    ```
    **NOTE:** For the first time, it will probably fail due to missing `TXT` record in Cloudflare. Add the TXT record to Cloudflare and run `make infra-plan` followed by `make infra-apply` again.
-1. Update `.env` with the output values
+1. Update `.env` with the output values.
    ```
    make infra-update-dotenv
    ```
@@ -119,6 +119,10 @@ Currently supported services: `mongo` and `mongo-express`
 1. Build and Package the app
    ```bash
    make backend-build
+   ```
+1. Push Docker image
+   ```bash
+   make backend-push
    ```
 1. Deploy the app to Azure
    ```bash
