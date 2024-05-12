@@ -6,6 +6,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-22.04
     env:
+      PROJECT_NAME: ${{ vars.PROJECT_NAME }}
       PACKAGE_VERSION: "1.0.${{ github.run_number }}"
     steps:
       - name: Checkout repository
