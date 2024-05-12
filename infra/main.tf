@@ -32,6 +32,7 @@ resource "azurerm_linux_web_app" "webapp" {
   }
 
   site_config {
+    http2_enabled       = true
     minimum_tls_version = "1.2"
     health_check_path   = "/health"
     application_stack {
