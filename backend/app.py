@@ -86,7 +86,7 @@ def generate_random_restaurant():
     }
 
 
-@app.route('/restaurants/generate', methods=['GET'])
+@app.route('/restaurants/generate', methods=['POST'])
 def generate_restaurants():
     num_restaurants = request.args.get('count', default=5, type=int)
     new_restaurants = [generate_random_restaurant()

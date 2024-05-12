@@ -244,3 +244,5 @@ I've decided to add Docker to the project. I've created a `Dockerfile` for the b
 I'm not sure why, but when sending a `POST` request to the API, Cloudflare is returning a 405 error. Looking in the logs, it's as if Cloudflare proxies the request as `GET` instead of `POST`, hence the 405 error. I've tried to disable the WAF, but it didn't help. I've decided to use a `GET` request instead of a `POST` request for the `/restaurants/generate` endpoint.
 
 I need to further investigate this issue, I'm intrigued.
+
+Oh, my, god, I've found the issue - https://stackoverflow.com/questions/44776644/azure-asp-web-api-error-405-method-not-allowed - Apparently, I've been using **http**://restro.meirg.co.il instead of **https**://restro.meirg.co.il, and that's why the issue occurred. I've fixed it by using the correct URL in the Postman collection. Embarrassing, but I'm glad I've found the issue 🙈
