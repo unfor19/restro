@@ -95,15 +95,9 @@ def generate_restaurants():
     return jsonify({"message": f"Successfully added {num_restaurants} restaurants.", "ids": [str(id) for id in result.inserted_ids]}), 201
 
 
-# If the collection is empty, add some a single restaurant
+# If the collection is empty (first time ever) - add restaurants
 if restaurants_collection.count_documents({}) == 0:
-    restaurants_collection.insert_one({
-        "name": "The Golden Duck",
-        "style": "chinese",
-        "vegetarian": "no",
-        "open_hour": "11:00",
-        "close_hour": "22:00"
-    })
+    generate_restaurants()
 
 
 @app.route('/restaurants', methods=['GET', 'POST'])
