@@ -31,6 +31,13 @@ resource "azurerm_linux_web_app" "webapp" {
     DOCKER_ENABLE_CI                        = var.docker_enable_ci
   }
 
+  # Handle deployment here once - we don't want to redeploy the app every time the configuration changes
+  # The deployment is done by the CI/CD pipeline, using the command
+  # `az webapp config container set ... --container-image-name ${DOCKER_OWNER}/${PROJECT_NAME}:${PACKAGE_VERSION}
+  lifecycle {
+    ignore_changes = [site_config.0.application_stack.0.docker_image_tag, site_config.0.application_stack.0.docker_image]
+  }
+
   site_config {
     ftps_state          = "Disabled"
     http2_enabled       = true
