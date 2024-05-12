@@ -124,6 +124,15 @@ azure-remote-state-init: ## Azure remote state init
 	# Create blob container
 	az storage container create --name ${STATE_STORAGE_CONTAINER_NAME} --account-name ${STATE_STORAGE_ACCOUNT_NAME}
 
+azure-service-principal-list: ## Azure service principal list
+	az account list --output table
+
+azure-service-principal-create: validate-SUBSCRIPTION_ID validate-RESOURCE_GROUP_NAME ## Azure service principal create
+	# Source - https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#create-a-service-principal
+	az ad sp create-for-rbac --name ${PROJECT_NAME} --role contributor \
+														--scopes /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP_NAME} \
+														--json-auth
+
 azure-login: ## Azure login
 	@az login
 # --- Azure --- END --------------------------------------------------------------
