@@ -6,6 +6,15 @@ resource "azurerm_cosmosdb_account" "cosmosdb" {
   kind                = "MongoDB"
   enable_free_tier    = true
 
+  backup {
+    # https://learn.microsoft.com/en-us/azure/cosmos-db/periodic-backup-storage-redundancy
+    retention_in_hours  = 24 * var.db_backup_retention_days
+    interval_in_minutes = 60 * var.db_backup_hours_interval
+    # https://learn.microsoft.com/en-us/azure/storage/common/storage-redundancy#redundancy-in-the-primary-region
+    storage_redundancy = var.db_backup_storage_redundancy
+    type               = "Periodic"
+  }
+
   # Must enable this, otherwise getting:
   # pymongo.errors.ServerSelectionTimeoutError: Request blocked by network firewall
   public_network_access_enabled = true
@@ -29,6 +38,8 @@ resource "azurerm_cosmosdb_account" "cosmosdb" {
   }
 
   capabilities {
+    # What is EnableAggregationPipeline
+    # https://docs.microsoft.com/en-us/azure/cosmos-db/mongodb-aggregation
     name = "EnableAggregationPipeline"
   }
 
@@ -42,28 +53,5 @@ resource "azurerm_cosmosdb_account" "cosmosdb" {
 
   capabilities {
     name = "EnableMongo"
-  }
-}
-
-
-resource "azurerm_cosmosdb_mongo_database" "database" {
-  name                = var.project_name
-  resource_group_name = azurerm_resource_group.rg.name
-  account_name        = azurerm_cosmosdb_account.cosmosdb.name
-  throughput          = 1000
-}
-
-resource "azurerm_cosmosdb_mongo_collection" "collection" {
-  name                = "restaurants"
-  resource_group_name = azurerm_resource_group.rg.name
-  account_name        = azurerm_cosmosdb_account.cosmosdb.name
-  database_name       = azurerm_cosmosdb_mongo_database.database.name
-
-  shard_key  = "uniqueKey"
-  throughput = 400
-
-  index {
-    keys   = ["_id"]
-    unique = true
   }
 }

@@ -81,6 +81,28 @@ variable "db_allowed_public_ips" {
   default     = ""
 }
 
+variable "db_backup_retention_days" {
+  description = "The retention days for the CosmosDB"
+  type        = number
+  default     = 5
+}
+
+variable "db_backup_hours_interval" {
+  description = "The interval in hours for the CosmosDB backup"
+  type        = number
+  default     = 3
+}
+
+variable "db_backup_storage_redundancy" {
+  description = "The storage redundancy for the CosmosDB backup - Geo, Local, Zone"
+  type        = string
+  default     = "Local"
+  validation {
+    condition     = var.db_backup_storage_redundancy == "Geo" || var.db_backup_storage_redundancy == "Local" || var.db_backup_storage_redundancy == "Zone"
+    error_message = "The storage redundancy must be Geo, Local, or Zone"
+  }
+}
+
 
 locals {
   random_number       = var.random_integer
