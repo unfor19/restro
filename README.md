@@ -36,6 +36,42 @@ One-time setup steps to prepare the environment.
    make azure-remote-state-init
    ```
 
+#### Azure Service Principal
+
+This setup creates an Azure Service Principal so GitHub Actions can authenticate with Azure.
+
+1. Login to Azure
+
+   ```bash
+   make azure-login
+   ```
+
+1. List available subscriptions
+
+   ```bash
+   make azure-service-principal-list
+   ```
+
+   Sample output
+
+   ```
+   Name           CloudName    SubscriptionId                        TenantId                              State    IsDefault
+   -------------  -----------  ------------------------------------  ------------------------------------  -------  -----------
+   Pay-As-You-Go  AzureCloud   00000000-0000-0000-0000-000000000000  12345678-0000-0000-0000-000000000000  Enabled  True
+   ```
+
+1. Copy **SubscriptionId** and set it in `.env`
+   ```bash
+   SUBSCRIPTION_ID=00000000-0000-0000-0000-000000000000
+   ```
+1. Create the Service Principal
+   ```bash
+   make azure-service-principal-create
+   ```
+1. Copy the output JSON and save it in a safe place
+1. [Add the service principal as a GitHub secret](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#add-the-service-principal-as-a-github-secret)
+1. The app is now ready to be deployed with GitHub Actions to Azure
+
 ### Cloudflare
 
 I'm using Cloudflare to protect the website with a custom password. The site is accessible only by users with the custom password in the header. If you wish to strengthen the security, you can add more rules to the WAF, like "Rate Limiting".
@@ -78,44 +114,12 @@ I'm using Cloudflare to protect the website with a custom password. The site is 
    make infra-update-dotenv
    ```
 
-### Services
-
-For local development, you can run the services using Docker.
-
-Currently supported services: `mongo` and `mongo-express`
-
-1. Run the services
-   ```bash
-   make services-up
-   ```
-1. Cleanup - Remove the services
-   ```bash
-   make services-down
-   ```
-
 ### Backend
 
 1. Login to Azure
    ```bash
    make azure-login
    ```
-1. Prepare the backend environment
-   ```bash
-   make backend-prepare
-   ```
-1. Install requirements
-   ```bash
-   make backend-install
-   ```
-1. Run the app locally - access [http://127.0.0.1:5000](http://localhost:5000)
-   ```bash
-   # Required by the backend - runs mongodb
-   make services-up
-   ```
-   ```bash
-   make backend-run
-   ```
-1. Add features to the backend
 1. Build and Package the app
    ```bash
    make backend-build
@@ -128,3 +132,30 @@ Currently supported services: `mongo` and `mongo-express`
    ```bash
    make backend-deploy
    ```
+
+## Local Development
+
+1. Prepare the backend environment
+   ```bash
+   make backend-prepare
+   ```
+2. Install requirements
+   ```bash
+   make backend-install
+   ```
+3. Run services locally - [mongo](https://www.mongodb.com/) and [mongo-express](https://github.com/mongo-express/mongo-express)
+   ```bash
+   make services-up
+   ```
+4. Run the app locally - access [http://127.0.0.1:5000](http://localhost:5000)
+   ```bash
+   make backend-run
+   ```
+
+## Authors
+
+Created and maintained by [Meir Gabay](https://meirg.co.il)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/unfor19/restro/blob/main/LICENSE) file for details
