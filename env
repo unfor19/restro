@@ -10,3 +10,8 @@ TF_VAR_hostname=restro.meirg.co.il
 
 # Used in resource names for uniqueness
 TF_VAR_random_integer=23
+
+
+# Comma separated IP addresses that are allowed to access the database
+# Useful for using MongoDB Atlas from a local machine to connect to CosmoDB on Azure
+TF_VAR_db_allowed_public_ips=12.13.32.232,5.13.32.232

@@ -17,6 +17,8 @@ resource "azurerm_cosmosdb_account" "cosmosdb" {
     id = azurerm_subnet.private.id
   }
 
+  ip_range_filter = var.db_allowed_public_ips
+
   geo_location {
     location          = azurerm_resource_group.rg.location
     failover_priority = 0
