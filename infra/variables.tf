@@ -103,6 +103,15 @@ variable "db_backup_storage_redundancy" {
   }
 }
 
+variable "db_total_throughput" {
+  description = "The total throughput for the CosmosDB"
+  type        = number
+  default     = 400
+  validation {
+    condition     = var.db_total_throughput >= 100 && var.db_total_throughput <= 1000
+    error_message = "The total throughput must be between 400 and 1000 to keep it free"
+  }
+}
 
 locals {
   random_number       = var.random_integer

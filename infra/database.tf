@@ -6,6 +6,10 @@ resource "azurerm_cosmosdb_account" "cosmosdb" {
   kind                = "MongoDB"
   enable_free_tier    = true
 
+  capacity {
+    total_throughput_limit = var.db_total_throughput
+  }
+
   backup {
     # https://learn.microsoft.com/en-us/azure/cosmos-db/periodic-backup-storage-redundancy
     retention_in_hours  = 24 * var.db_backup_retention_days
