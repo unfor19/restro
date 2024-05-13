@@ -23,12 +23,12 @@ resource "azurerm_linux_web_app" "webapp" {
   https_only          = true
 
   app_settings = {
-    "DB_CONNECTION_STRING"                  = azurerm_cosmosdb_account.cosmosdb.connection_strings[0],
-    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.webapp.connection_string,
-    WEBSITES_ENABLE_APP_SERVICE_STORAGE     = "false"
-    DOCKER_REGISTRY_SERVER_URL              = "https://index.docker.io/v1"
-    WEBSITES_PORT                           = "8000"
-    DOCKER_ENABLE_CI                        = var.docker_enable_ci
+    DB_CONNECTION_STRING                  = azurerm_cosmosdb_account.cosmosdb.connection_strings[0],
+    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.webapp.connection_string,
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE   = "false"
+    DOCKER_REGISTRY_SERVER_URL            = "https://index.docker.io/v1"
+    WEBSITES_PORT                         = "8000"
+    DOCKER_ENABLE_CI                      = var.docker_enable_ci
   }
 
   # Handle deployment here once - we don't want to redeploy the app every time the configuration changes
