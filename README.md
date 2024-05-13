@@ -10,6 +10,8 @@ A simple restaurant recommendation system.
 
 This project helped me transition my AWS knowledge to Azure, which I've written about in the [JOURNEY.md](https://github.com/unfor19/restro/blob/main/JOURNEY.md) file.
 
+[Demo on YouTube](https://www.youtube.com/watch?v=_6gIZ5G2_WM&ab_channel=MeirGabay)
+
 ## Requirements
 
 - [Azure account](https://azure.microsoft.com/en-us/free/) with Pay-as-you-go subscription
