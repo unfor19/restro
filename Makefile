@@ -88,6 +88,15 @@ ifndef DOCKER_IMAGE_TAG
 DOCKER_IMAGE_TAG:=${DOCKER_IMAGE}:${DOCKER_TAG}
 endif
 
+
+ifeq (${CI},true)
+# Support old version of Azure CLI
+AZ_DEPLOY_ARG:=--docker-custom-image-name
+else
+# Support version 2.60.0 and above
+AZ_DEPLOY_ARG:=--container-image-name
+endif
+
 # Removes blank rows - fgrep -v fgrep
 # Replace ":" with "" (nothing)
 # Print a beautiful table with column
@@ -194,7 +203,7 @@ run-prod: backend-run-prod
 
 # https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-deploy
 backend-deploy:
-	az webapp config container set --name ${WEBAPP_NAME} --resource-group ${RESOURCE_GROUP_NAME} --container-image-name ${DOCKER_OWNER}/${PROJECT_NAME}:${PACKAGE_VERSION}
+	az webapp config container set --name ${WEBAPP_NAME} --resource-group ${RESOURCE_GROUP_NAME} ${AZ_DEPLOY_ARG} ${DOCKER_OWNER}/${PROJECT_NAME}:${PACKAGE_VERSION}
 
 
 deploy: backend-deploy

@@ -24,7 +24,4 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Deploy
-        uses: azure/cli@v2
-        with:
-          azcliversion: 2.60.0
-          inlineScript: make backend-deploy
+        run: make backend-deploy
