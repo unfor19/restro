@@ -1,5 +1,11 @@
 # restro
 
+[![Backend CI](https://github.com/unfor19/restro/actions/workflows/backend-ci.yaml/badge.svg)](https://github.com/unfor19/restro/actions/workflows/backend-ci.yaml) [![Backend CD](https://github.com/unfor19/restro/actions/workflows/backend-cd.yaml/badge.svg)](https://github.com/unfor19/restro/actions/workflows/backend-cd.yaml)
+
+<div style="text-align: center;">
+<img alt="logo" width="100%" src="https://github.com/unfor19/restro/blob/main/assets/logo.webp?raw=true" />
+</div>
+
 A simple restaurant recommendation system.
 
 This project helped me transition my AWS knowledge to Azure, which I've written about in the [JOURNEY.md](https://github.com/unfor19/restro/blob/main/JOURNEY.md) file.
