@@ -7,7 +7,7 @@ on:
         description: "Tag"
         required: true
 
-run-name: Deploy version ${{ inputs.tag }} by @${{ github.actor }}
+run-name: Deploy version ${{ inputs.tag }} by ${{ github.actor }}
 
 jobs:
   deploy:
