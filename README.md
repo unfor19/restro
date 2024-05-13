@@ -12,6 +12,16 @@ This project helped me transition my AWS knowledge to Azure, which I've written 
 
 [Demo on YouTube](https://www.youtube.com/watch?v=_6gIZ5G2_WM&ab_channel=MeirGabay)
 
+## Architecture
+
+<details>
+
+<summary>Click to expand/collapse</summary>
+
+[![Architecture](https://github.com/unfor19/restro/blob/main/assets/restro.architecture.webp?raw=true)]
+
+</details>
+
 ## Requirements
 
 - [Azure account](https://azure.microsoft.com/en-us/free/) with Pay-as-you-go subscription
