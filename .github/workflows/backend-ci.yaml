@@ -23,4 +23,6 @@ jobs:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Push
+        # Push only if branch is "main" or a tag is pushed
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
         run: make backend-push
