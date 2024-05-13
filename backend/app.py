@@ -173,6 +173,9 @@ def healthcheck():
 @app.route('/', methods=['GET'])
 def index():
     return jsonify({
+        "/": {
+            "GET": "Lists all available endpoints and their methods"
+        },
         "/restaurants": {
             "GET": "Get all restaurants",
             "POST": "Add a new restaurant"
@@ -181,17 +184,17 @@ def index():
             "GET": "Get a restaurant by ID",
             "DELETE": "Delete a restaurant by ID"
         },
-        "/restaurants/recommendation": {
-            "GET": "Get restaurant recommendations based on query params"
-        },
         "/restaurants/generate": {
-            "POST": "Generate random restaurants into the database",
+            "POST": "Generate random restaurants into the database"
+        },
+        "/restaurants/recommendation": {
+            "GET": "Get restaurant recommendations based on style, vegetarian, and open_now query parameters"
         },
         "/version": {
-            "GET": "Get the version of the application"
+            "GET": "Get the current version of the application"
         },
         "/health": {
-            "GET": "Health check endpoint"
+            "GET": "Perform a health check of the application"
         }
     })
 
