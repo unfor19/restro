@@ -57,9 +57,8 @@ resource "azurerm_cosmosdb_mongo_collection" "collection" {
   account_name        = azurerm_cosmosdb_account.cosmosdb.name
   database_name       = azurerm_cosmosdb_mongo_database.database.name
 
-  default_ttl_seconds = "1000"
-  shard_key           = "uniqueKey"
-  throughput          = 400
+  shard_key  = "uniqueKey"
+  throughput = 400
 
   index {
     keys   = ["_id"]
