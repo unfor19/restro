@@ -108,7 +108,7 @@ locals {
   random_number       = var.random_integer
   resource_group_name = "${var.project_name}-rg-${local.random_number}"
 
-  cloudflare_ips = try(split("\n", data.http.cloudflare_ips.body), [])
+  cloudflare_ips = try(split("\n", data.http.cloudflare_ips.response_body), [])
 
   budget_notification_emails = try(split(",", var.budget_notification_emails), [])
 
