@@ -246,3 +246,7 @@ I'm not sure why, but when sending a `POST` request to the API, Cloudflare is re
 I need to further investigate this issue, I'm intrigued.
 
 Oh, my, god, I've found the issue - https://stackoverflow.com/questions/44776644/azure-asp-web-api-error-405-method-not-allowed - Apparently, I've been using **http**://restro.meirg.co.il instead of **https**://restro.meirg.co.il, and that's why the issue occurred. I've fixed it by using the correct URL in the Postman collection. Embarrassing, but I'm glad I've found the issue 🙈
+
+## CI/CD
+
+A bit exciting, the tricky part would be authenticating between GitHub Actions and Azure. I'll follow the instructions - https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#use-the-azure-login-action-with-a-service-principal-secret - and see how it goes.

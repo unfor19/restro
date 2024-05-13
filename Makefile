@@ -88,6 +88,15 @@ ifndef DOCKER_IMAGE_TAG
 DOCKER_IMAGE_TAG:=${DOCKER_IMAGE}:${DOCKER_TAG}
 endif
 
+
+ifeq (${CI},true)
+# Support old version of Azure CLI
+AZ_DEPLOY_ARG:=--docker-custom-image-name
+else
+# Support version 2.60.0 and above
+AZ_DEPLOY_ARG:=--container-image-name
+endif
+
 # Removes blank rows - fgrep -v fgrep
 # Replace ":" with "" (nothing)
 # Print a beautiful table with column
@@ -123,6 +132,15 @@ azure-remote-state-init: ## Azure remote state init
 
 	# Create blob container
 	az storage container create --name ${STATE_STORAGE_CONTAINER_NAME} --account-name ${STATE_STORAGE_ACCOUNT_NAME}
+
+azure-service-principal-list: ## Azure service principal list
+	az account list --output table
+
+azure-service-principal-create: validate-SUBSCRIPTION_ID validate-RESOURCE_GROUP_NAME ## Azure service principal create
+	# Source - https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#create-a-service-principal
+	az ad sp create-for-rbac --name ${PROJECT_NAME} --role contributor \
+														--scopes /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP_NAME} \
+														--json-auth
 
 azure-login: ## Azure login
 	@az login
@@ -185,7 +203,7 @@ run-prod: backend-run-prod
 
 # https://learn.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-deploy
 backend-deploy:
-	az webapp config container set --name ${WEBAPP_NAME} --resource-group ${RESOURCE_GROUP_NAME} --container-image-name ${DOCKER_OWNER}/${PROJECT_NAME}:${PACKAGE_VERSION}
+	az webapp config container set --name ${WEBAPP_NAME} --resource-group ${RESOURCE_GROUP_NAME} ${AZ_DEPLOY_ARG} ${DOCKER_OWNER}/${PROJECT_NAME}:${PACKAGE_VERSION}
 
 
 deploy: backend-deploy
