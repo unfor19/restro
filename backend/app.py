@@ -40,17 +40,6 @@ else:
 from flask import Flask, json, request, jsonify
 # autopep8: on
 app = Flask(__name__)
-
-
-if is_cloud:
-    app.logger.removeHandler(default_handler)
-    handler = logging.StreamHandler()
-    handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(name)s %(levelname)s: %(message)s'))
-    app.logger.addHandler(handler)
-else:
-    app.logger.addHandler(default_handler)
-
 app.logger.setLevel(logging.INFO)
 
 
@@ -208,11 +197,15 @@ def log_request(response):
         return response
 
     headers = {key: value for key, value in request.headers}
+    client_ip = request.headers.get(
+        'Cf-Connecting-Ip', request.headers.get(
+            'X-Forwarded-For', request.remote_addr)
+    )
 
     log_params = {
         "method": request.method,
         "path": request.path,
-        "ip": request.headers.get('X-Forwarded-For', request.remote_addr),
+        "ip": client_ip,
         "host": request.host,
         "params": json.dumps(request.args, default=str),
         "data": json.dumps(request.get_json(silent=True), default=str),
