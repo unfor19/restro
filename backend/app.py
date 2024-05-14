@@ -6,7 +6,7 @@ from pymongo import MongoClient
 from bson.json_util import dumps
 
 from flask.logging import default_handler
-from logging import INFO, getLogger
+import logging
 
 
 def get_is_cloud():
@@ -44,11 +44,14 @@ app = Flask(__name__)
 
 if is_cloud:
     app.logger.removeHandler(default_handler)
-    app.logger = getLogger(__name__)
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(name)s %(levelname)s: %(message)s'))
+    app.logger.addHandler(handler)
 else:
     app.logger.addHandler(default_handler)
 
-app.logger.setLevel(INFO)
+app.logger.setLevel(logging.INFO)
 
 
 # Setup MongoDB connection
@@ -204,16 +207,18 @@ def log_request(response):
     if '/health' in request.path:
         return response
 
+    headers = {key: value for key, value in request.headers}
+
     log_params = {
         "method": request.method,
         "path": request.path,
-        "ip": request.remote_addr,
+        "ip": request.headers.get('X-Forwarded-For', request.remote_addr),
         "host": request.host,
         "params": json.dumps(request.args, default=str),
         "data": json.dumps(request.get_json(silent=True), default=str),
-        "headers": json.dumps(request.headers, default=str),
+        "headers": headers
     }
-    app.logger.info(log_params)
+    app.logger.info(json.dumps(log_params))
 
     return response
 
