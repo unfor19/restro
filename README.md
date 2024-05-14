@@ -18,7 +18,7 @@ This project helped me transition my AWS knowledge to Azure, which I've written 
 
 <summary>Click to expand/collapse</summary>
 
-![Architecture](https://github.com/unfor19/restro/blob/main/assets/restro.architecture.webp?raw=true)
+![Architecture](https://github.com/unfor19/restro/blob/main/assets/restro.architecture.png?raw=true)
 
 </details>
 
