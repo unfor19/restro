@@ -54,6 +54,12 @@ variable "budget_notification_emails" {
   sensitive   = true
 }
 
+variable "docker_registry_url" {
+  description = "The Docker registry URL"
+  type        = string
+  default     = "https://index.docker.io"
+}
+
 variable "docker_image" {
   description = "The Docker image to deploy to the web app"
   type        = string

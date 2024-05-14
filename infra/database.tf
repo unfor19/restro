@@ -4,7 +4,7 @@ resource "azurerm_cosmosdb_account" "cosmosdb" {
   resource_group_name = azurerm_resource_group.rg.name
   offer_type          = "Standard"
   kind                = "MongoDB"
-  enable_free_tier    = true
+  free_tier_enabled   = true
 
   capacity {
     total_throughput_limit = var.db_total_throughput

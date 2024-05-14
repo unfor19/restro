@@ -23,29 +23,30 @@ resource "azurerm_linux_web_app" "webapp" {
   https_only          = true
 
   app_settings = {
-    DB_CONNECTION_STRING                  = azurerm_cosmosdb_account.cosmosdb.connection_strings[0],
+    DB_CONNECTION_STRING                  = azurerm_cosmosdb_account.cosmosdb.primary_mongodb_connection_string,
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.webapp.connection_string,
     WEBSITES_ENABLE_APP_SERVICE_STORAGE   = "false"
-    DOCKER_REGISTRY_SERVER_URL            = "https://index.docker.io/v1"
     WEBSITES_PORT                         = "8000"
     DOCKER_ENABLE_CI                      = var.docker_enable_ci
   }
 
-  # Handle deployment here once - we don't want to redeploy the app every time the configuration changes
-  # The deployment is done by the CI/CD pipeline, using the command
-  # `az webapp config container set ... --container-image-name ${DOCKER_OWNER}/${PROJECT_NAME}:${PACKAGE_VERSION}
   lifecycle {
-    ignore_changes = [site_config.0.application_stack.0.docker_image_tag, site_config.0.application_stack.0.docker_image]
+    ignore_changes = [
+      site_config.0.application_stack.0.docker_image_name, # App deployment is handled outside of Terraform
+      virtual_network_subnet_id                            # A must due to azurerm_app_service_virtual_network_swift_connection.webapp
+    ]
   }
 
   site_config {
-    ftps_state          = "Disabled"
-    http2_enabled       = true
-    minimum_tls_version = "1.2"
-    health_check_path   = "/health"
+    ftps_state                    = "Disabled"
+    http2_enabled                 = true
+    minimum_tls_version           = "1.2"
+    health_check_path             = "/health"
+    ip_restriction_default_action = "Deny"
+
     application_stack {
-      docker_image     = var.docker_image
-      docker_image_tag = var.docker_tag
+      docker_image_name   = "${var.docker_image}:${var.docker_tag}"
+      docker_registry_url = var.docker_registry_url
     }
 
     dynamic "ip_restriction" {
