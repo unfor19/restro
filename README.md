@@ -24,15 +24,21 @@ This project helped me transition my AWS knowledge to Azure, which I've written 
 
 ## Requirements
 
-- [Azure account](https://azure.microsoft.com/en-us/free/) with Pay-as-you-go subscription
+- [Azure Account](https://azure.microsoft.com/en-us/free/) with Pay-As-You-Go subscription
 - [Cloudflare Account](https://dash.cloudflare.com/sign-up)
-- Brew - [make](https://www.gnu.org/software/make/), [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
-  ```bash
-  brew install azure-cli
-  ```
 - [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli) - 1.5.0 or higher
 - [Docker](https://docs.docker.com/get-docker/)
 - [Python](https://github.com/pyenv/pyenv) - 3.9 or higher
+- Package managers apps:
+  - macOS - [HomeBrew](https://brew.sh/)
+    ```bash
+    brew install make azure-cli
+    ```
+  - Windows - [Chocolatey](https://chocolatey.org/)
+    ```powershell
+    # PowerShell as Administrator
+    choco -y install make azure-cli
+    ```
 
 ## Setup
 
