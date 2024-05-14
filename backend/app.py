@@ -1,12 +1,12 @@
+
+from datetime import datetime
+import logging
 import os
 import random
 
-from datetime import datetime
+
 from pymongo import MongoClient
 from bson.json_util import dumps
-
-from flask.logging import default_handler
-import logging
 
 
 def get_is_cloud():
