@@ -127,7 +127,7 @@ Cloudflare is used to protect the website with a custom password. The site is ac
 
 Cloudflare requires a one-time setup, which should be done after deploying the infrastructure for the first time, as it relies on the output of the infrastructure deployment.
 
-### CNAME DNS Record
+#### CNAME DNS Record
 
 This step is required to route traffic from Cloudflare to the Azure app.
 
@@ -142,7 +142,7 @@ This step is required to route traffic from Cloudflare to the Azure app.
 
 Check [assets/cloudflare.dns.png](https://github.com/unfor19/restro/blob/main/assets/cloudflare.dns.png) to see what it should look like on Cloudflare.
 
-### Security WAF Custom Rule
+#### Security WAF Custom Rule
 
 This step is optional, as it protects the app with a custom password in the header. I do recommend adding it to avoid unwanted access to the app.
 
