@@ -140,7 +140,7 @@ This step is required to route traffic from Cloudflare to the Azure app.
    - **TTL** > `Auto`
    - **Proxy Status** > `Proxied`
 
-Check ![assets/cloudflare.dns.png](https://github.com/unfor19/restro/blob/main/assets/cloudflare.dns.png) to see what it should look like on Cloudflare.
+Check [assets/cloudflare.dns.png](https://github.com/unfor19/restro/blob/main/assets/cloudflare.dns.png) to see what it should look like on Cloudflare.
 
 ### Security WAF Custom Rule
 
