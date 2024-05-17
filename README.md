@@ -96,19 +96,6 @@ This setup creates an Azure Service Principal so GitHub Actions can authenticate
 1. [Add the service principal as a GitHub secret](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#add-the-service-principal-as-a-github-secret)
 1. The app is now ready to be deployed with GitHub Actions to Azure
 
-### Cloudflare
-
-I'm using Cloudflare to protect the website with a custom password. The site is accessible only by users with the custom password in the header. If you wish to strengthen the security, you can add more rules to the WAF, like "Rate Limiting".
-
-1. Navigate to [Cloudflare dashboard](https://dash.cloudflare.com/)
-2. **Websites** > Select website > **Security** > **WAF** > **Custom rules** > **+ Create rule**
-3. Edit expression > Set to the below expression, replace `restro.meirg.co.il` with your domain, `my-custom-header-name with` your custom header name, and `my_cuStOm_passw0rd` with your custom password.
-   ```
-   (http.host eq "restro.meirg.co.il" and all(http.request.headers["my-custom-header-name"][*] ne "my_cuStOm_passw0rd"))
-   ```
-   - **Action** > **Block**
-   - **With response type** > **Default Cloudflare WAF block page**
-
 ## Getting Started
 
 ### Infra
@@ -132,13 +119,45 @@ I'm using Cloudflare to protect the website with a custom password. The site is 
    ```bash
    make infra-apply
    ```
-   **NOTE:** For the first time, it will probably fail due to missing `TXT` record in Cloudflare. Add the TXT record to Cloudflare and run `make infra-plan` followed by `make infra-apply` again.
-1. Update `.env` with the output values.
+   **NOTE:** For the first time, it will probably fail due to missing `TXT` record in Cloudflare. Add the TXT record to Cloudflare and `make infra-plan` followed by `make infra-apply` again.
+
+### Cloudflare
+
+Cloudflare is used to protect the website with a custom password. The site is accessible only by users with the custom password in the header. If you wish to strengthen the security, you can add more rules to the WAF, like "Rate Limiting".
+
+Cloudflare requires a one-time setup, which should be done after deploying the infrastructure for the first time, as it relies on the output of the infrastructure deployment.
+
+### CNAME DNS Record
+
+This step is required to route traffic from Cloudflare to the Azure app.
+
+1. Navigate to [Cloudflare dashboard](https://dash.cloudflare.com/)
+2. **Websites** > Select website > **DNS** > **+ Add record**
+3. Add the following record:
+   - **Type** > `CNAME`
+   - **Name** > `restro`
+   - **Target** > `restro-{random_integer}.azurewebsites.net` (output of infra)
+   - **TTL** > `Auto`
+   - **Proxy Status** > `Proxied`
+
+Check ![assets/cloudflare.dns.png](https://github.com/unfor19/restro/blob/main/assets/cloudflare.dns.png) to see what it should look like on Cloudflare.
+
+### Security WAF Custom Rule
+
+This step is optional, as it protects the app with a custom password in the header. I do recommend adding it to avoid unwanted access to the app.
+
+1. Navigate to [Cloudflare dashboard](https://dash.cloudflare.com/)
+2. **Websites** > Select website > **Security** > **WAF** > **Custom rules** > **+ Create rule**
+3. Edit expression > Set to the below expression, replace `restro.meirg.co.il` with your domain, `my-custom-header-name with` your custom header name, and `my_cuStOm_passw0rd` with your custom password.
    ```
-   make infra-update-dotenv
+   (http.host eq "restro.meirg.co.il" and all(http.request.headers["my-custom-header-name"][*] ne "my_cuStOm_passw0rd"))
    ```
+   - **Action** > **Block**
+   - **With response type** > **Default Cloudflare WAF block page**
 
 ### Backend
+
+This section is about building and deploying the backend application to Azure.
 
 1. Login to Azure
    ```bash
